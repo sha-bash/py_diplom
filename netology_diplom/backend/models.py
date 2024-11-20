@@ -49,6 +49,7 @@ class Product(models.Model):
 
 
 class ProductInfo(models.Model):
+    external_id = models.PositiveIntegerField(verbose_name='External ID')
     product = models.ForeignKey(Product, verbose_name='Product',
                                related_name='product_infos',
                                blank=True,
@@ -58,6 +59,7 @@ class ProductInfo(models.Model):
                             blank=True,
                             on_delete=models.CASCADE)
     name = models.CharField(max_length=80)
+    model = models.CharField(max_length=80, verbose_name='Model')
     quantity = models.PositiveIntegerField(verbose_name='Quantity')
     price = models.DecimalField(max_digits=20, decimal_places=2,
                               verbose_name='Price',
@@ -112,12 +114,22 @@ class ProductParameter(models.Model):
 
 
 class Order(models.Model):
+    STATE_CHOICES = (
+        ('cart', 'Cart'),
+        ('new', 'New'),
+        ('confirmed', 'Confirmed'),
+        ('assembled', 'Assembled'),
+        ('sent', 'Sent'),
+        ('delivered', 'Delivered'),
+        ('canceled', 'Canceled'),
+    )
+
     user = models.ForeignKey(User, verbose_name='User',
                             related_name='orders',
                             blank=True,
                             on_delete=models.CASCADE)
     dt = models.DateTimeField(auto_now_add=True)
-    state = models.CharField(verbose_name='Status', max_length=15)
+    state = models.CharField(verbose_name='Status', max_length=15, choices=STATE_CHOICES)
 
     class Meta:
         verbose_name = 'Order'
